@@ -9,11 +9,9 @@ pygame.init()
 #######################################################
 #######################################################
 
-# class snake
-# position: arr holding the coordinates of the head of the snake
-# body : 2D arr holding position of body parts ~ to the head 
-# direction : arr holding the direction [x, y] 
 
+# class position, makes it easier to understand the code 
+# of the class Snake
 class Position:
     def __init__(self, x_pos, y_pos):
         self.x = x_pos
@@ -26,17 +24,39 @@ class Position:
         self.x = change_x
         self.y = change_y
 
+class Direction:
+    def __init__(self, x_direction, y_direction):
+        self.x = x_direction
+        self.y = y_direction
+    def X(self):
+        return self.x
+    def Y(self):
+        return self.y
+    def rotateClockwise():
+        tmp_x = self.x
+        self.x = self.y
+        self.y = -1 * tmp_x
+    def rotateAnticlockwise():
+        tmp_x = self.x
+        self.x = -1 * self.y
+        self.y = tmp_x
 
+# class snake
+# body : 2D arr holding position of body parts ~ to the head 
+# direction : arr holding the direction [x, y] 
 class snake:
     def __init__(self, x_pos, y_pos):
         self.direction = [1, 0]
         self.position = Position(x_pos, y_pos)
-        
+
     def changeDirection(change_x, change_y):
         self.direction = [change_x, change_y]
     def moveForward(self):
-        self.position.setPosition(self.direction[0], self.direction[1])
-
+        self.position.changePosition(self.direction[0], self.direction[1])
+    def moveRight(self):
+        self.direction.rotateClockwise
+    def moveLeft(self):
+        self.direction.rotateAnticlockwise
 
 
 
