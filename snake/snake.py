@@ -31,9 +31,9 @@ class Position:
         return self.x
     def Y(self):
         return self.y
-    def changePosition(change_x, change_y):
-        self.x = change_x
-        self.y = change_y
+    def changePosition(self,change_x, change_y):
+        self.x += change_x
+        self.y += change_y
     def __repr__(self):
         return str(self.X()) + "|" + str(self.Y()) + " "
     def __str__(self):
@@ -47,11 +47,11 @@ class Direction:
         return self.x
     def Y(self):
         return self.y
-    def rotateClockwise():
+    def rotateClockwise(self):
         tmp_x = self.x
         self.x = self.y
         self.y = -1 * tmp_x
-    def rotateAnticlockwise():
+    def rotateAnticlockwise(self):
         tmp_x = self.x
         self.x = -1 * self.y
         self.y = tmp_x
@@ -64,7 +64,7 @@ class SnakeBody:
         for i in range(1, num_of_bodyparts+1):
             self.arr.append(Position( headposition.X()-i, headposition.Y() ))
     def getNumOfBodyparts(self):
-        return len(arr)
+        return len(self.arr)
     def addBodypart(self, position):
         self.arr.append(position)
     def getBodypart(self, number):
@@ -72,6 +72,10 @@ class SnakeBody:
             px = self.arr[number]
             py = self.arr[number]
             return Position(px, py)
+    def moveForward(self, head):
+        self.arr.insert(0, Position(head.X(), head.Y()))
+        self.arr.pop(len(self.arr)-1)
+
     def __repr__(self):
         s = ""
         for i in range(0, len(self.arr)):
@@ -95,15 +99,54 @@ class Snake:
     def changeDirection(change_x, change_y):
         self.direction = [change_x, change_y]
     def moveForward(self):
-        self.position.changePosition(self.direction[0], self.direction[1])
+        self.body.moveForward(self.position)
+        self.position.changePosition(self.direction.X(), self.direction.Y())
     def moveRight(self):
-        self.direction.rotateClockwise
+        self.direction.rotateClockwise()
     def moveLeft(self):
-        self.direction.rotateAnticlockwise
+        self.direction.rotateAnticlockwise()
     def __repr__(self):
         return "Head: " + str(self.position) + " Body: " + str(self.body) 
     def __str__(self):
         return "Head: " + str(self.position) + " Body: " + str(self.body) 
+    def turn(self, direction):
+        LEFT = Direction(-1, 0)
+        RIGHT = Direction(1, 0)
+        DOWN = Direction(0, 1)
+        UP = Direction(0, -1)
+        if direction == "LEFT":
+            snake.moveLeft()
+        elif direction == "RIGHT":
+            snake.moveRight()
+        elif direction == "UP":
+            if snake.direction == RIGHT:
+                snake.moveLeft()
+            elif snake.direction == LEFT:
+                snake.moveRight()
+        elif direction == "DOWN":
+            if snake.direction == LEFT:
+                snake.moveLeft()
+            elif snake.direction == RIGHT:
+                snake.moveRight()
+
+def drawSquare(screen, width, px, py, colour=(255, 0, 0)):
+    pygame.draw.rect(screen, colour, (px, py, width, width), 1)
+
+def drawBorders(screen, field_columns, field_rows, square_size):
+    for i in range (0, field_columns):
+        drawSquare(screen, square_size, i * square_size, 0)
+        drawSquare(screen, square_size, i * square_size, (field_rows - 1) * square_size)
+    for i in range (1, field_rows-1):
+        drawSquare(screen, square_size, 0, i * square_size)
+        drawSquare(screen, square_size, (field_columns - 1) * square_size, i * square_size)
+def drawSnake(screen, snake, square_size):
+    #1st: draw the head aka position
+    px = snake.position.X() * square_size
+    py = snake.position.Y() * square_size
+    drawSquare(screen, square_size, px, py)
+    #2nd draw the body parts
+    parts = snake.body.getNumOfBodyparts()
+    #for i in range(0, parts):
 
 
 
@@ -114,31 +157,19 @@ screen_width = 320
 screen_height= 240
 field_columns = screen_width / square_size
 field_rows = screen_height / square_size
-
-LEFT = Direction(-1, 0)
-RIGHT = Direction(1, 0)
-DOWN = Direction(0, 1)
-UP = Direction(0, -1)
-
 gamefield = [[0 for x in range(field_columns)] for x in range(field_rows)]
-
 # colours
 BLACK = (0x00, 0x00, 0x00)
-
-
-
-
-
 #setup the screen
 size = (screen_width, screen_height)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Snake")
-
-
-
 done = False
+passed_time = 0
+lvl_speed = [1000, 900, 800, 600, 500, 400]
+level = 0
 clock = pygame.time.Clock()
-
+snake = Snake(int(field_columns/2), int(field_rows/2))
 # game loop
 while not done:
     # Keyboard Input and events
@@ -147,24 +178,30 @@ while not done:
             done = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
-                print("KEYDOWN")
+                snake.turn("DOWN")
             elif event.key == pygame.K_UP:
-                print("KEYUP")
+                snake.turn("UP")
             elif event.key == pygame.K_LEFT:
-                print("KEYLEFT")
+                snake.turn("LEFT")                
             elif event.key == pygame.K_RIGHT:
-                print("KEYRIGHT")
+                snake.turn("RIGHT")
 
     #Game logic should go here
-    snake = Snake(int(field_columns/2), int(field_rows/2))
+    
     print snake
-
-
     # Drawing code should go here
     screen.fill(BLACK)
+    drawBorders(screen, field_columns, field_rows, square_size)
+    drawSnake(screen, snake, square_size)
+
 
     pygame.display.flip()
-
-    clock.tick(60)
+    
+    passed_time += clock.tick(60)
+    if passed_time > lvl_speed[level]:
+        snake.moveForward()
+        passed_time = 0
+        
+        
 
 
