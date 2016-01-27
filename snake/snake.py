@@ -146,7 +146,12 @@ def drawSnake(screen, snake, square_size):
     drawSquare(screen, square_size, px, py)
     #2nd draw the body parts
     parts = snake.body.getNumOfBodyparts()
-    #for i in range(0, parts):
+    for i in range(0, parts):
+        pos = snake.body.getBodypart(i)
+        px = pos.X() * square_size
+        py = pos.Y() * square_size
+        drawSquare(screen, square_size, px, py)
+
 
 
 
