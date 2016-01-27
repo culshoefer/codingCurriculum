@@ -176,7 +176,7 @@ def drawSnake(screen, snake, square_size):
 
 
 # game constants
-square_size = 20
+square_size = 40
 screen_width = 640
 screen_height= 480
 field_columns = screen_width / square_size
@@ -194,6 +194,7 @@ lvl_speed = [1000, 900, 800, 600, 500, 400]
 level = 0
 clock = pygame.time.Clock()
 snake = Snake(int(field_columns/2), int(field_rows/2))
+
 # game loop
 while not done:
     # Keyboard Input and events
@@ -215,7 +216,7 @@ while not done:
     #collision detection
     
     # border collision detection
-    if snake.position.X() == 0 or snake.position.X() == field_columns - 1:
+    if snake.position.X() == 0 or snake.position.X() == field_columns - 1 or snake.position.Y() == 0 or snake.position.Y() == field_rows - 1:
         done = True
         print "border collision"
     
