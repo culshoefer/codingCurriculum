@@ -1,6 +1,13 @@
 import pygame
 
 pygame.init()
+
+
+
+
+
+
+
 #######################################################
 #######################################################
 ##                                                   ##
@@ -38,6 +45,8 @@ class Position:
         return str(self.X()) + "|" + str(self.Y()) + " "
     def __str__(self):
         return str(self.X()) + "|" + str(self.Y()) + " "
+    def __eq__(self, position):
+        return self.x == position.X() and self.y == position.Y()
 
 class Direction:
     def __init__(self, x_direction, y_direction):
@@ -167,7 +176,7 @@ def drawSnake(screen, snake, square_size):
 
 
 # game constants
-square_size = 10
+square_size = 20
 screen_width = 640
 screen_height= 480
 field_columns = screen_width / square_size
@@ -203,6 +212,23 @@ while not done:
 
     #Game logic should go here
     
+    #collision detection
+    
+    # border collision detection
+    if snake.position.X() == 0 or snake.position.X() == field_columns - 1:
+        done = True
+        print "border collision"
+    
+    #body collision
+    if len(snake.body.arr) > 2:
+        print len(snake.body.arr)
+        for i in range(2, len(snake.body.arr)):
+            if snake.body.arr[i] == snake.position:
+                done = True
+                print "body collision"
+
+
+
     print snake
     # Drawing code should go here
     screen.fill(BLACK)
