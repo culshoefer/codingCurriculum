@@ -49,12 +49,12 @@ class Direction:
         return self.y
     def rotateClockwise(self):
         tmp_x = self.x
-        self.x = self.y
-        self.y = -1 * tmp_x
-    def rotateAnticlockwise(self):
-        tmp_x = self.x
         self.x = -1 * self.y
         self.y = tmp_x
+    def rotateAnticlockwise(self):
+        tmp_x = self.x
+        self.x = self.y
+        self.y = -1 * tmp_x
     def __eq__(self, direction):
         return self.x == direction.X() and self.y == direction.Y() 
 
@@ -68,9 +68,9 @@ class SnakeBody:
     def addBodypart(self, position):
         self.arr.append(position)
     def getBodypart(self, number):
-        if number < len(arr) and number >= 0:
-            px = self.arr[number]
-            py = self.arr[number]
+        if number < len(self.arr) and number >= 0:
+            px = self.arr[number].X()
+            py = self.arr[number].Y()
             return Position(px, py)
     def moveForward(self, head):
         self.arr.insert(0, Position(head.X(), head.Y()))
@@ -101,9 +101,9 @@ class Snake:
     def moveForward(self):
         self.body.moveForward(self.position)
         self.position.changePosition(self.direction.X(), self.direction.Y())
-    def moveRight(self):
+    def moveClockwise(self):
         self.direction.rotateClockwise()
-    def moveLeft(self):
+    def moveAntiClockwise(self):
         self.direction.rotateAnticlockwise()
     def __repr__(self):
         return "Head: " + str(self.position) + " Body: " + str(self.body) 
@@ -114,20 +114,30 @@ class Snake:
         RIGHT = Direction(1, 0)
         DOWN = Direction(0, 1)
         UP = Direction(0, -1)
+        
+        # turn left
         if direction == "LEFT":
-            snake.moveLeft()
+            if snake.direction == UP or snake.direction == LEFT:
+                snake.moveAntiClockwise()
+            elif snake.direction == DOWN or snake.direction == RIGHT:
+                snake.moveClockwise()
+        # turn right
         elif direction == "RIGHT":
-            snake.moveRight()
+            if snake.direction == UP or snake.direction == LEFT:
+                snake.moveClockwise()
+            elif snake.direction == DOWN or snake.direction == RIGHT:
+                snake.moveAntiClockwise()
+
         elif direction == "UP":
             if snake.direction == RIGHT:
-                snake.moveLeft()
+                snake.moveAntiClockwise()
             elif snake.direction == LEFT:
-                snake.moveRight()
+                snake.moveClockwise()
         elif direction == "DOWN":
             if snake.direction == LEFT:
-                snake.moveLeft()
+                snake.moveAntiClockwise()
             elif snake.direction == RIGHT:
-                snake.moveRight()
+                snake.moveClockwise()
 
 def drawSquare(screen, width, px, py, colour=(255, 0, 0)):
     pygame.draw.rect(screen, colour, (px, py, width, width), 1)
