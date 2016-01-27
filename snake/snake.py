@@ -115,13 +115,13 @@ class Snake:
         DOWN = Direction(0, 1)
         UP = Direction(0, -1)
         
-        # turn left
+
         if direction == "LEFT":
             if snake.direction == UP or snake.direction == LEFT:
                 snake.moveAntiClockwise()
             elif snake.direction == DOWN or snake.direction == RIGHT:
                 snake.moveClockwise()
-        # turn right
+
         elif direction == "RIGHT":
             if snake.direction == UP or snake.direction == LEFT:
                 snake.moveClockwise()
@@ -168,8 +168,8 @@ def drawSnake(screen, snake, square_size):
 
 # game constants
 square_size = 10
-screen_width = 320
-screen_height= 240
+screen_width = 640
+screen_height= 480
 field_columns = screen_width / square_size
 field_rows = screen_height / square_size
 gamefield = [[0 for x in range(field_columns)] for x in range(field_rows)]
