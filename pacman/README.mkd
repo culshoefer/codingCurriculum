@@ -3,3 +3,8 @@
 Written in Python 2.7 using Pygame.
 
 Sounds from [http://www.classicgaming.cc/classics/pacman/sounds.php](http://www.classicgaming.cc/classics/pacman/sounds.php).
+
+**TODO**:
+
+* Change level parsing code so that paths are only 1 pixel wide, rather than 3 pixels. Change `level1.png` accordingly.  
+* Make Pacman sprite better + have transparency

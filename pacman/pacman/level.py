@@ -40,8 +40,11 @@ class Level():
     arena = []
     arena_width = None
     arena_height = None
+    screen_size = None
 
-    def __init__(self, level_file):
+    def __init__(self, screen_size, level_file):
+        self.screen_size = screen_size
+
         level_image = pygame.image.load(level_file)
         px_array = pygame.PixelArray(level_image)
 
@@ -68,8 +71,31 @@ class Level():
                 except KeyError:
                     raise ValueError("{0} is not a valid level descriptor image: encountered color {1}\n".format(level_file, px_array[row][col]))
 
+    def get_position_from_arena_position(self, arena_position):
+        width, height = self.screen_size
+        arena_row, arena_col = arena_position
 
-    def get_surface(self, width, height):
+        aspect_ratio = width/self.arena_width 
+
+        return (aspect_ratio*arena_col, aspect_ratio * arena_row)
+
+    def is_accesible(self, arena_position):
+        arena_row, arena_col = arena_position
+
+        is_wall = True if (self.arena[arena_row][arena_col] == WALL_BLOCK) else False
+
+        is_middle_of_path = True
+        for p_row in [-1, 0, 1]:
+            for p_col in [-1, 0, 1]:
+                if self.arena[arena_row + p_row][arena_col + p_col] != EMPTY_BLOCK:
+                    is_middle_of_path = False
+
+
+        return (not is_wall) and is_middle_of_path
+
+    def get_surface(self):
+
+        width, height = self.screen_size
         surface = pygame.Surface((width, height))
         px_array = pygame.PixelArray(surface)
 
