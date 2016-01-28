@@ -7,7 +7,8 @@ import pygame
 
 class Mole(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super().__init__()
+        # super().__init__()
+        super(Mole, self).__init__()
 
         self.image = pygame.image.load("mole.jpg").convert_alpha()
         self.rect = self.image.get_rect()
