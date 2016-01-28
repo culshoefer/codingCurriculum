@@ -1,3 +1,5 @@
+from future import division
+
 import random
 
 import pygame
@@ -69,6 +71,8 @@ while True:
                 current_tile.show(False)
             else:  # skip the current iteration
                 continue
+
+            check_win()
 
             # map the (x, y) into array indices
             x, y = map(lambda x: x // 152, last_position)
