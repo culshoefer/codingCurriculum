@@ -79,19 +79,11 @@ class Level():
 
         return (aspect_ratio*arena_col, aspect_ratio * arena_row)
 
-    def is_accesible(self, arena_position):
+    def is_accessible(self, arena_position):
         arena_row, arena_col = arena_position
-
         is_wall = True if (self.arena[arena_row][arena_col] == WALL_BLOCK) else False
 
-        is_middle_of_path = True
-        for p_row in [-1, 0, 1]:
-            for p_col in [-1, 0, 1]:
-                if self.arena[arena_row + p_row][arena_col + p_col] != EMPTY_BLOCK:
-                    is_middle_of_path = False
-
-
-        return (not is_wall) and is_middle_of_path
+        return (not is_wall)
 
     def get_surface(self):
 

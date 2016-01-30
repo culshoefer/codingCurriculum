@@ -1,47 +1,72 @@
 import pygame
 from .level import Level
 
+NUM_DIRECTIONS = 4
+ROTATION_ANGLE = (360/NUM_DIRECTIONS)
+
 class Character(pygame.sprite.Sprite):
     image = None
     rect = None
-    direction = None #right = 0, up = 1, left = 2, down = 3
+    next_direction = None #right = 0, up = 1, left = 2, down = 3
+    curr_direction = None
     arena_position = None #(row, col)
 
-    def __init__(self, level, image, arena_position, direction):
+    def __init__(self, level, image, scale_factor, arena_position, direction):
         pygame.sprite.Sprite.__init__(self)
 
         self.level = level
 
         self.image = pygame.image.load(image)
-        self.image = pygame.transform.rotate(self.image, direction * 90)
-        self.direction = direction
+        image_width, image_height = self.image.get_size()
+        self.image = pygame.transform.scale(self.image, (int(image_width * scale_factor), int(image_height * scale_factor)))
+        self.image = pygame.transform.rotate(self.image, direction * ROTATION_ANGLE)
+        self.curr_direction = direction
 
         self.arena_position = arena_position
         self.rect = self.image.get_rect().move(level.get_position_from_arena_position(arena_position))
 
     def set_direction(self, direction):
-        assert direction in range(4), "pacman.character: tried to set invalid direction {}.\n".format(direction)
+        assert direction in range(NUM_DIRECTIONS), "pacman.character: tried to set invalid direction {}.\n".format(direction)
 
+        self.next_direction = direction
 
-        self.image = pygame.transform.rotate(self.image, (direction - self.direction) * 90)
-        self.direction = direction
+    def update_direction(self):
+        if self.next_direction != None and self.level.is_accessible(self.get_next_cell_in_direction(self.next_direction)):
+            self.image = pygame.transform.rotate(self.image, (self.next_direction - self.curr_direction) * ROTATION_ANGLE)
 
-    def update(self, deltat):
-        if deltat > 100:
-            arena_row, arena_col = self.arena_position
+            self.curr_direction = self.next_direction
+            self.next_direction = None
 
-            assert self.direction in range(4), "pacman.character: direction is {}, which is invalid.\n".format(self.direction)
+    def get_next_cell_in_direction(self, direction):
+        arena_row, arena_col = self.arena_position
+        if direction == 0:
+            arena_col += 1
+        elif direction == 1:
+            arena_row -= 1
+        elif direction == 2:
+            arena_col -= 1
+        elif direction == 3:
+            arena_row += 1
 
-            if (self.direction == 0) and self.level.is_accesible((arena_row, arena_col+1)):
-                arena_col += 1
-            elif self.direction == 1 and self.level.is_accesible((arena_row-1, arena_col)):
-                arena_row -= 1
-            elif self.direction == 2 and self.level.is_accesible((arena_row, arena_col-1)):
-                arena_col -= 1
-            elif self.direction == 3 and self.level.is_accesible((arena_row+1, arena_col)):
-                arena_row += 1
+        # Handle loop around
+        if arena_row < 0:
+            arena_row = self.level.arena_height - 1
+        elif arena_row >= self.level.arena_height:
+            arena_row = 0
 
-            self.arena_position = (arena_row, arena_col)
+        if arena_col < 0:
+            arena_col = self.level.arena_width - 1
+        elif arena_col >= self.level.arena_width:
+            arena_col = 0
+
+        return (arena_row, arena_col)
+
+    def update(self):
+        self.update_direction()
+        next_cell = self.get_next_cell_in_direction(self.curr_direction) 
+
+        if self.level.is_accessible(next_cell):
+            self.arena_position = next_cell 
             self.rect = self.image.get_rect().move(self.level.get_position_from_arena_position(self.arena_position))
 
 
