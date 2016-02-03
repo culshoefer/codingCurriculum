@@ -13,8 +13,8 @@ if __name__ == '__main__':
 
     l = Level(screen_size, 'levels/level1.png')
     scale_factor = 1.5
-    
-    pacman = Pacman(l, 'sprites/pacman.png', scale_factor, (1,1), 0)
+
+    pacman = Pacman(l, 'sprites/pacman.png', scale_factor, (1, 1), 0)
     characters = pygame.sprite.RenderPlain(pacman)
 
     clock = pygame.time.Clock()
@@ -29,9 +29,9 @@ if __name__ == '__main__':
                 if event.key == pygame.K_UP:
                     pacman.set_direction(1)
                 if event.key == pygame.K_LEFT:
-                    pacman.set_direction(2) 
+                    pacman.set_direction(2)
                 if event.key == pygame.K_DOWN:
-                    pacman.set_direction(3) 
+                    pacman.set_direction(3)
 
         # Update in discrete steps
         time_since_last_update += clock.tick(FRAMES_PER_SECOND)
@@ -40,9 +40,7 @@ if __name__ == '__main__':
             characters.update()
             time_since_last_update = 0
 
-        
         # Draw
-        screen.blit(l.get_surface(), (0,0))
+        screen.blit(l.get_surface(), (0, 0))
         characters.draw(screen)
         pygame.display.flip()
-

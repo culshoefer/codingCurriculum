@@ -14,7 +14,7 @@ PACMAN_SPAWN_BLOCK = 7
 
 # Colors used to encode the information in the level descriptor image
 EMPTY_BLOCK_COLOR = (255, 255, 255)
-WALL_BLOCK_COLOR = (0, 0, 0) 
+WALL_BLOCK_COLOR = (0, 0, 0)
 GHOST_ONLY_BLOCK_COLOR = (136, 136, 136)
 
 BLINKY_SPAWN_BLOCK_COLOR = (221, 0, 0)
@@ -24,15 +24,20 @@ CLYDE_SPAWN_BLOCK_COLOR = (255, 153, 0)
 
 PACMAN_SPAWN_BLOCK_COLOR = (255, 255, 51)
 
-spawn_blocks = [BLINKY_SPAWN_BLOCK, PINKY_SPAWN_BLOCK, INKY_SPAWN_BLOCK, CLYDE_SPAWN_BLOCK, PACMAN_SPAWN_BLOCK]
+spawn_blocks = [BLINKY_SPAWN_BLOCK, PINKY_SPAWN_BLOCK, INKY_SPAWN_BLOCK,
+                CLYDE_SPAWN_BLOCK, PACMAN_SPAWN_BLOCK]
 
 # Dictionaries from blocks to colors and viceversa
-block_to_color_mapping = {EMPTY_BLOCK:EMPTY_BLOCK_COLOR, WALL_BLOCK:WALL_BLOCK_COLOR, GHOST_ONLY_BLOCK:GHOST_ONLY_BLOCK_COLOR,
-        BLINKY_SPAWN_BLOCK:BLINKY_SPAWN_BLOCK_COLOR, PINKY_SPAWN_BLOCK:PINKY_SPAWN_BLOCK_COLOR,
-        INKY_SPAWN_BLOCK:INKY_SPAWN_BLOCK_COLOR, CLYDE_SPAWN_BLOCK:CLYDE_SPAWN_BLOCK_COLOR,
-        PACMAN_SPAWN_BLOCK:PACMAN_SPAWN_BLOCK_COLOR}
+block_to_color_mapping = {EMPTY_BLOCK: EMPTY_BLOCK_COLOR,
+                          WALL_BLOCK: WALL_BLOCK_COLOR,
+                          GHOST_ONLY_BLOCK: GHOST_ONLY_BLOCK_COLOR,
+                          BLINKY_SPAWN_BLOCK: BLINKY_SPAWN_BLOCK_COLOR,
+                          PINKY_SPAWN_BLOCK: PINKY_SPAWN_BLOCK_COLOR,
+                          INKY_SPAWN_BLOCK: INKY_SPAWN_BLOCK_COLOR,
+                          CLYDE_SPAWN_BLOCK: CLYDE_SPAWN_BLOCK_COLOR,
+                          PACMAN_SPAWN_BLOCK: PACMAN_SPAWN_BLOCK_COLOR}
 
-color_to_block_mapping = {v:k for k, v in block_to_color_mapping.items()}
+color_to_block_mapping = {v: k for k, v in block_to_color_mapping.items()}
 
 DISPLAY_WALL_BLOCK_COLOR = (0, 51, 255)
 DISPLAY_EMPTY_BLOCK_COLOR = (0, 0, 0)
@@ -65,20 +70,24 @@ class Level():
             self.arena.append([])
             for col in range(self.arena_width):
                 try:
-                    # Have to do this "unboxing" because pygame.Color is not hashable, so it cannot be put in a dictionary
+                    # Have to do this "unboxing" because pygame.Color is not
+                    # hashable, so it cannot be put in a dictionary
                     current_color = level_image.unmap_rgb(px_array[col][row])
-                    color_tuple = (current_color.r, current_color.g, current_color.b)
+                    color_tuple = (current_color.r, current_color.g,
+                                   current_color.b)
 
                     self.arena[row].append(color_to_block_mapping[color_tuple])
 
                 except KeyError:
-                    raise ValueError("{0} is not a valid level descriptor image: encountered color {1}\n".format(level_file, px_array[row][col]))
+                    raise ValueError("{0} is not a valid level descriptor\
+                            image: encountered color {1}\n" .format(level_file,
+                            px_array[row][col]))
 
     def get_position_from_arena_position(self, arena_position):
         width, height = self.screen_size
         arena_row, arena_col = arena_position
 
-        aspect_ratio = width/self.arena_width 
+        aspect_ratio = width/self.arena_width
 
         return (aspect_ratio*arena_col, aspect_ratio * arena_row)
 
@@ -94,14 +103,13 @@ class Level():
         surface = pygame.Surface((width, height))
         px_array = pygame.PixelArray(surface)
 
-
         # Sprite and arena must have same aspect ratio
-
-        assert ((width % self.arena_width == 0) and (height % self.arena_height == 0) and
-                (width/self.arena_width == height/self.arena_height)), "Requested sprite size is incompatible with arena size.\n"
+        assert ((width % self.arena_width == 0) and
+                (height % self.arena_height == 0) and
+                (width/self.arena_width == height/self.arena_height)
+               ), "Requested sprite size is incompatible with arena size.\n"
 
         aspect_ratio = width/self.arena_width
-
 
         # For each block in the arena
         for row in range(self.arena_height):
@@ -117,7 +125,5 @@ class Level():
                     for p_col in range(aspect_ratio):
                         px_array[aspect_ratio*col + p_col][aspect_ratio*row + p_row] = color
 
-
         return px_array.make_surface()
-
 
