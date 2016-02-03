@@ -34,6 +34,9 @@ block_to_color_mapping = {EMPTY_BLOCK:EMPTY_BLOCK_COLOR, WALL_BLOCK:WALL_BLOCK_C
 
 color_to_block_mapping = {v:k for k, v in block_to_color_mapping.items()}
 
+DISPLAY_WALL_BLOCK_COLOR = (0, 51, 255)
+DISPLAY_EMPTY_BLOCK_COLOR = (0, 0, 0)
+
 
 class Level():
     # Matrix that holds the level details
@@ -103,16 +106,16 @@ class Level():
         # For each block in the arena
         for row in range(self.arena_height):
             for col in range(self.arena_width):
-                color = block_to_color_mapping[self.arena[row][col]]
+                # Use this for all blocks, unless otherwise specified
+                color = DISPLAY_EMPTY_BLOCK_COLOR
 
-                # Don't draw spawn points and ghost only blocks
-                if (self.arena[row][col] in spawn_blocks) or self.arena[row][col] == GHOST_ONLY_BLOCK:
-                    color = (255, 255, 255)
+                if self.arena[row][col] == WALL_BLOCK:
+                    color = DISPLAY_WALL_BLOCK_COLOR
 
                 # Draw the pixels
                 for p_row in range(aspect_ratio):
                     for p_col in range(aspect_ratio):
-                        px_array[aspect_ratio*col + p_col][aspect_ratio*row + p_row] = color 
+                        px_array[aspect_ratio*col + p_col][aspect_ratio*row + p_row] = color
 
 
         return px_array.make_surface()
