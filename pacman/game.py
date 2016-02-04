@@ -7,8 +7,7 @@ from pacman.pinky import Pinky
 from pacman.inky import Inky
 from pacman.clyde import Clyde
 
-FRAMES_PER_SECOND = 10
-MS_PER_FRAME = (1000.0/FRAMES_PER_SECOND)
+MAX_FRAMERATE = 30
 
 def same_position(s1, s2):
     return s1.arena_position == s2.arena_position 
@@ -26,12 +25,12 @@ if __name__ == '__main__':
     l = Level(screen_size, 'levels/level1.png')
     scale_factor = 1.5
 
-    pacman = Pacman(l, 'sprites/pacman.png', scale_factor, 0)
+    pacman = Pacman(l, 'sprites/pacman.png', scale_factor, 0, 10)
 
-    blinky = Blinky(l, 'sprites/blinky.png', scale_factor, 0)
-    pinky = Pinky(l, 'sprites/pinky.png', scale_factor, 0)
-    inky = Inky(l, 'sprites/inky.png', scale_factor, 0)
-    clyde = Clyde(l, 'sprites/clyde.png', scale_factor, 0)
+    blinky = Blinky(l, 'sprites/blinky.png', scale_factor, 0, 7)
+    pinky = Pinky(l, 'sprites/pinky.png', scale_factor, 0, 6)
+    inky = Inky(l, 'sprites/inky.png', scale_factor, 0, 5)
+    clyde = Clyde(l, 'sprites/clyde.png', scale_factor, 0, 4)
 
     players = pygame.sprite.GroupSingle(pacman)
     ghosts = pygame.sprite.Group(blinky, pinky, inky, clyde)
@@ -52,7 +51,6 @@ if __name__ == '__main__':
 
     # Game loop
     clock = pygame.time.Clock()
-    time_since_last_update = 0
     while True:
         # Process events
         events = pygame.event.get()
@@ -67,9 +65,7 @@ if __name__ == '__main__':
                 if event.key == pygame.K_DOWN:
                     pacman.set_direction(3)
 
-        # Update in discrete steps
-        time_since_last_update += clock.tick(FRAMES_PER_SECOND)
-        
+                
         dots = l.get_dots()
         eaten_dot = pygame.sprite.spritecollideany(pacman, dots, same_position)
         if eaten_dot is not None:
@@ -94,10 +90,19 @@ if __name__ == '__main__':
             pygame.time.wait(int(death_sound.get_length() * 1000))
             pygame.quit()
 
-        if time_since_last_update > MS_PER_FRAME:
-            players.update()
-            ghosts.update()
-            time_since_last_update = 0
+        # Update in discrete steps
+        ticks = clock.tick(MAX_FRAMERATE)
+
+        pacman.time_since_last_update += ticks
+        if pacman.time_since_last_update > pacman.get_update_frequency():
+            pacman.update()
+            pacman.time_since_last_update = 0
+
+        for ghost in ghosts:
+            ghost.time_since_last_update += ticks
+            if ghost.time_since_last_update > ghost.get_update_frequency():
+                ghost.update()
+                ghost.time_since_last_update = 0
 
         # Draw
         screen.blit(l.get_surface(), (0, 0))

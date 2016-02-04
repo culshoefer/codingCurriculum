@@ -4,9 +4,9 @@ from .character import Character, ROTATION_ANGLE
 
 
 class Pacman(Character):
-    def __init__(self, level, image, scale_factor, direction):
+    def __init__(self, level, image, scale_factor, direction, speed):
         arena_position = level.get_pacman_spawn_position()
-        Character.__init__(self, level, image, scale_factor, arena_position, direction)
+        Character.__init__(self, level, image, scale_factor, arena_position, direction, speed)
 
     def is_accessible(self, arena_position):
         arena_row, arena_col = arena_position

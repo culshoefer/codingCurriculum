@@ -13,10 +13,15 @@ class Character(pygame.sprite.Sprite):
 
     radius = 2  # For circle collision detection, do not remove;
 
-    def __init__(self, level, image, scale_factor, arena_position, direction):
+    speed = None
+    time_since_last_update = None 
+
+    def __init__(self, level, image, scale_factor, arena_position, direction, speed):
         pygame.sprite.Sprite.__init__(self)
 
         self.level = level
+        self.speed = speed
+        self.time_since_last_update = 0
 
         self.image = pygame.image.load(image)
         image_width, image_height = self.image.get_size()
@@ -33,6 +38,9 @@ class Character(pygame.sprite.Sprite):
 
     def get_next_cell_in_direction(self, direction):
         return self.level.get_next_cell_in_direction(self.arena_position, direction)
+
+    def get_update_frequency(self):
+        return (1000.0/self.speed)
 
     def update(self):
         self.update_direction()
