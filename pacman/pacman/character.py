@@ -7,6 +7,7 @@ ROTATION_ANGLE = (360/NUM_DIRECTIONS)
 class Character(pygame.sprite.Sprite):
     image = None
     rect = None
+    level = None
     next_direction = None  # right = 0, up = 1, left = 2, down = 3
     curr_direction = None
     arena_position = None  # (row, col)

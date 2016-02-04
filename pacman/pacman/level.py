@@ -1,4 +1,5 @@
 import pygame
+from .dot import Dot
 
 # Values to encode information in internal logic
 EMPTY_BLOCK = 0
@@ -11,6 +12,8 @@ INKY_SPAWN_BLOCK = 5
 CLYDE_SPAWN_BLOCK = 6
 
 PACMAN_SPAWN_BLOCK = 7
+DOT_BLOCK = 8
+SUPER_DOT_BLOCK = 9
 
 # Colors used to encode the information in the level descriptor image
 EMPTY_BLOCK_COLOR = (255, 255, 255)
@@ -49,6 +52,7 @@ class Level():
     arena_width = None
     arena_height = None
     screen_size = None
+    dots = None
 
     def __init__(self, screen_size, level_file):
         self.screen_size = screen_size
@@ -65,6 +69,8 @@ class Level():
         self.arena_width = height
         self.arena_height = width
 
+        self.dots = pygame.sprite.Group()
+
         # Read and decode level descriptor
         for row in range(self.arena_height):
             self.arena.append([])
@@ -77,6 +83,10 @@ class Level():
                                    current_color.b)
 
                     self.arena[row].append(color_to_block_mapping[color_tuple])
+
+                    # Puts dots in all empty blocks
+                    if color_to_block_mapping[color_tuple] == EMPTY_BLOCK:
+                        self.dots.add(Dot(self, 'sprites/dot.png', (row, col)))
 
                 except KeyError:
                     raise ValueError("{0} is not a valid level descriptor\
@@ -96,6 +106,9 @@ class Level():
         is_wall = True if (self.arena[arena_row][arena_col] == WALL_BLOCK) else False
 
         return (not is_wall)
+
+    def get_dots(self):
+        return self.dots
 
     def get_surface(self):
 
