@@ -32,8 +32,6 @@ class Character(pygame.sprite.Sprite):
 
     def update_direction(self):
         if self.next_direction is not None and self.level.is_accessible(self.get_next_cell_in_direction(self.next_direction)):
-            self.image = pygame.transform.rotate(self.image, (self.next_direction - self.curr_direction) * ROTATION_ANGLE)
-
             self.curr_direction = self.next_direction
             self.next_direction = None
 

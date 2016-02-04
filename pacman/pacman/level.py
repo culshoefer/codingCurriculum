@@ -139,7 +139,7 @@ class Level():
 
         assert False, "Pacman spawn position does not exist.\n"
 
-    def get_red_ghost_spawn_position(self):
+    def get_blinky_spawn_position(self):
         for row in range(self.arena_height):
             for col in range(self.arena_width):
                 if self.arena[row][col] == BLINKY_SPAWN_BLOCK:
@@ -147,7 +147,29 @@ class Level():
 
         assert False, "Blinky (red ghost) spawn position does not exist.\n"
 
+    def get_pinky_spawn_position(self):
+        for row in range(self.arena_height):
+            for col in range(self.arena_width):
+                if self.arena[row][col] == PINKY_SPAWN_BLOCK:
+                    return (row, col)
 
+        assert False, "Pinky (pink ghost) spawn position does not exist.\n"
+
+    def get_inky_spawn_position(self):
+        for row in range(self.arena_height):
+            for col in range(self.arena_width):
+                if self.arena[row][col] == INKY_SPAWN_BLOCK:
+                    return (row, col)
+
+        assert False, "Inky (blue ghost) spawn position does not exist.\n"
+
+    def get_clyde_spawn_position(self):
+        for row in range(self.arena_height):
+            for col in range(self.arena_width):
+                if self.arena[row][col] == CLYDE_SPAWN_BLOCK:
+                    return (row, col)
+
+        assert False, "Clyde (orange ghost) spawn position does not exist.\n"
 
     def get_dots(self):
         return self.dots

@@ -1,15 +1,15 @@
 import pygame
 from .character import Character, NUM_DIRECTIONS
 
+NUM_MODES = 3
+CHASE_MODE = 0
+SCATTER_MODE = 1
+FRIGHTENED_MODE = 2
 
 class Ghost(Character):
     target = None
 
-    def __init__(self, level, image, scale_factor, direction):
-        arena_position = level.get_red_ghost_spawn_position()
-        Character.__init__(self, level, image, scale_factor, arena_position, direction)
-
-    def __bfs(self, starting_point, target):
+    def _bfs(self, starting_point, target):
         visited = [starting_point]
         to_visit = [[starting_point]]
 
@@ -39,8 +39,8 @@ class Ghost(Character):
 
     def update(self):
         if self.target is not None:
-            shortest_path_to_target = self.__bfs(self.arena_position, self.target.arena_position)
+            shortest_path_to_target = self._bfs(self.arena_position, self.target.arena_position)
 
             if shortest_path_to_target is not None and len(shortest_path_to_target) >= 2:
-                self.arena_position = self.__bfs(self.arena_position, self.target.arena_position)[1]
+                self.arena_position = shortest_path_to_target[1]
                 self.rect = self.image.get_rect().move(self.level.get_position_from_arena_position(self.arena_position))

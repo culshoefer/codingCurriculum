@@ -2,7 +2,10 @@
 import pygame
 from pacman.level import Level
 from pacman.pacman import Pacman
-from pacman.ghost import Ghost
+from pacman.blinky import Blinky
+from pacman.pinky import Pinky
+from pacman.inky import Inky
+from pacman.clyde import Clyde
 
 FRAMES_PER_SECOND = 10
 MS_PER_FRAME = (1000.0/FRAMES_PER_SECOND)
@@ -23,17 +26,23 @@ if __name__ == '__main__':
     scale_factor = 1.5
 
     pacman = Pacman(l, 'sprites/pacman.png', scale_factor, 0)
-    red_ghost = Ghost(l, 'sprites/red_ghost.png', scale_factor, 0)
 
-    red_ghost.follow(pacman)
+    blinky = Blinky(l, 'sprites/blinky.png', scale_factor, 0)
+    pinky = Pinky(l, 'sprites/pinky.png', scale_factor, 0)
+    inky = Inky(l, 'sprites/inky.png', scale_factor, 0)
+    clyde = Clyde(l, 'sprites/clyde.png', scale_factor, 0)
 
-    ghosts = pygame.sprite.Group(red_ghost)
-    characters = pygame.sprite.Group(pacman, red_ghost)
+    players = pygame.sprite.GroupSingle(pacman)
+    ghosts = pygame.sprite.Group(blinky, pinky, inky, clyde)
+
+    for ghost in ghosts:
+        ghost.follow(pacman)
     
     # Game start
     screen.blit(l.get_surface(), (0, 0))
     l.get_dots().draw(screen)
-    characters.draw(screen)
+    players.draw(screen)
+    ghosts.draw(screen)
     pygame.display.flip()
 
     beginning_sound = pygame.mixer.Sound('sounds/pacman_beginning.wav')
@@ -67,22 +76,24 @@ if __name__ == '__main__':
             if pygame.mixer.get_busy() == False:
                 chomp_sound.play()
 
-        if pygame.sprite.spritecollideany(pacman, ghosts, sprites_collide):
-            print "You were eaten.\n"
+        ghost_collision = pygame.sprite.spritecollideany(pacman, ghosts, sprites_collide)
+        if ghost_collision is not None:
+            print "You were eaten by {}.\n".format(ghost_collision.name)
             if pygame.mixer.get_busy() == False:
                 death_sound.play()
                 pygame.time.wait(int(death_sound.get_length() * 1000))
                 pygame.quit()
 
         if time_since_last_update > MS_PER_FRAME:
-            characters.update()
+            players.update()
+            ghosts.update()
             time_since_last_update = 0
-
 
         # Draw
         screen.blit(l.get_surface(), (0, 0))
         dots.draw(screen)
-        characters.draw(screen)
+        players.draw(screen)
+        ghosts.draw(screen)
         pygame.display.flip()
 
 
