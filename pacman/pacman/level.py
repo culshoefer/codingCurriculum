@@ -107,6 +107,48 @@ class Level():
 
         return (not is_wall)
 
+    def get_next_cell_in_direction(self, arena_position, direction):
+        arena_row, arena_col = arena_position
+        if direction == 0:
+            arena_col += 1
+        elif direction == 1:
+            arena_row -= 1
+        elif direction == 2:
+            arena_col -= 1
+        elif direction == 3:
+            arena_row += 1
+
+        # Handle loop around
+        if arena_row < 0:
+            arena_row = self.arena_height - 1
+        elif arena_row >= self.arena_height:
+            arena_row = 0
+
+        if arena_col < 0:
+            arena_col = self.arena_width - 1
+        elif arena_col >= self.arena_width:
+            arena_col = 0
+
+        return (arena_row, arena_col)
+
+    def get_pacman_spawn_position(self):
+        for row in range(self.arena_height):
+            for col in range(self.arena_width):
+                if self.arena[row][col] == PACMAN_SPAWN_BLOCK:
+                    return (row, col)
+
+        assert False, "Pacman spawn position does not exist.\n"
+
+    def get_red_ghost_spawn_position(self):
+        for row in range(self.arena_height):
+            for col in range(self.arena_width):
+                if self.arena[row][col] == BLINKY_SPAWN_BLOCK:
+                    return (row, col)
+
+        assert False, "Blinky (red ghost) spawn position does not exist.\n"
+
+
+
     def get_dots(self):
         return self.dots
 

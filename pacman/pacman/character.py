@@ -7,7 +7,6 @@ ROTATION_ANGLE = (360/NUM_DIRECTIONS)
 class Character(pygame.sprite.Sprite):
     image = None
     rect = None
-    level = None
     next_direction = None  # right = 0, up = 1, left = 2, down = 3
     curr_direction = None
     arena_position = None  # (row, col)
@@ -39,28 +38,7 @@ class Character(pygame.sprite.Sprite):
             self.next_direction = None
 
     def get_next_cell_in_direction(self, direction):
-        arena_row, arena_col = self.arena_position
-        if direction == 0:
-            arena_col += 1
-        elif direction == 1:
-            arena_row -= 1
-        elif direction == 2:
-            arena_col -= 1
-        elif direction == 3:
-            arena_row += 1
-
-        # Handle loop around
-        if arena_row < 0:
-            arena_row = self.level.arena_height - 1
-        elif arena_row >= self.level.arena_height:
-            arena_row = 0
-
-        if arena_col < 0:
-            arena_col = self.level.arena_width - 1
-        elif arena_col >= self.level.arena_width:
-            arena_col = 0
-
-        return (arena_row, arena_col)
+        return self.level.get_next_cell_in_direction(self.arena_position, direction)
 
     def update(self):
         self.update_direction()
