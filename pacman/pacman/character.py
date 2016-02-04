@@ -1,6 +1,6 @@
 import pygame
+from .level import NUM_DIRECTIONS
 
-NUM_DIRECTIONS = 4
 ROTATION_ANGLE = (360/NUM_DIRECTIONS)
 
 
@@ -10,6 +10,8 @@ class Character(pygame.sprite.Sprite):
     next_direction = None  # right = 0, up = 1, left = 2, down = 3
     curr_direction = None
     arena_position = None  # (row, col)
+
+    radius = 2  # For circle collision detection, do not remove;
 
     def __init__(self, level, image, scale_factor, arena_position, direction):
         pygame.sprite.Sprite.__init__(self)
@@ -27,13 +29,7 @@ class Character(pygame.sprite.Sprite):
 
     def set_direction(self, direction):
         assert direction in range(NUM_DIRECTIONS), "pacman.character: tried to set invalid direction {}.\n".format(direction)
-
         self.next_direction = direction
-
-    def update_direction(self):
-        if self.next_direction is not None and self.level.is_accessible(self.get_next_cell_in_direction(self.next_direction)):
-            self.curr_direction = self.next_direction
-            self.next_direction = None
 
     def get_next_cell_in_direction(self, direction):
         return self.level.get_next_cell_in_direction(self.arena_position, direction)

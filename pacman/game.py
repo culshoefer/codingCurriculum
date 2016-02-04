@@ -10,7 +10,7 @@ from pacman.clyde import Clyde
 FRAMES_PER_SECOND = 10
 MS_PER_FRAME = (1000.0/FRAMES_PER_SECOND)
 
-def sprites_collide(s1, s2):
+def same_position(s1, s2):
     return s1.arena_position == s2.arena_position 
 
 if __name__ == '__main__':
@@ -21,6 +21,7 @@ if __name__ == '__main__':
     pygame.mixer.init()
     chomp_sound = pygame.mixer.Sound('sounds/pacman_chomp.wav')
     death_sound = pygame.mixer.Sound('sounds/pacman_death.wav')
+    energizer_sound = pygame.mixer.Sound('sounds/pacman_eatfruit.wav')
 
     l = Level(screen_size, 'levels/level1.png')
     scale_factor = 1.5
@@ -70,19 +71,28 @@ if __name__ == '__main__':
         time_since_last_update += clock.tick(FRAMES_PER_SECOND)
         
         dots = l.get_dots()
-        eaten_dot = pygame.sprite.spritecollideany(pacman, dots, sprites_collide)
+        eaten_dot = pygame.sprite.spritecollideany(pacman, dots, same_position)
         if eaten_dot is not None:
             eaten_dot.remove(dots)
-            if pygame.mixer.get_busy() == False:
-                chomp_sound.play()
+            
+            if eaten_dot.is_super:
+                energizer_sound.play()
+                print "You ate an energizer."
 
-        ghost_collision = pygame.sprite.spritecollideany(pacman, ghosts, sprites_collide)
+            if pygame.mixer.get_busy() == False:
+                if eaten_dot.is_super:
+                    energizer_sound.play()
+                else:
+                    chomp_sound.play()
+
+        ghost_collision = pygame.sprite.spritecollideany(pacman, ghosts, pygame.sprite.collide_circle)
         if ghost_collision is not None:
             print "You were eaten by {}.\n".format(ghost_collision.name)
-            if pygame.mixer.get_busy() == False:
-                death_sound.play()
-                pygame.time.wait(int(death_sound.get_length() * 1000))
-                pygame.quit()
+
+            pygame.mixer.stop()
+            death_sound.play()
+            pygame.time.wait(int(death_sound.get_length() * 1000))
+            pygame.quit()
 
         if time_since_last_update > MS_PER_FRAME:
             players.update()

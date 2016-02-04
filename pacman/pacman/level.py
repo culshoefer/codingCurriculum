@@ -27,6 +27,8 @@ CLYDE_SPAWN_BLOCK_COLOR = (255, 153, 0)
 
 PACMAN_SPAWN_BLOCK_COLOR = (255, 255, 51)
 
+SUPER_DOT_BLOCK_COLOR = (51, 255, 0)
+
 spawn_blocks = [BLINKY_SPAWN_BLOCK, PINKY_SPAWN_BLOCK, INKY_SPAWN_BLOCK,
                 CLYDE_SPAWN_BLOCK, PACMAN_SPAWN_BLOCK]
 
@@ -38,13 +40,15 @@ block_to_color_mapping = {EMPTY_BLOCK: EMPTY_BLOCK_COLOR,
                           PINKY_SPAWN_BLOCK: PINKY_SPAWN_BLOCK_COLOR,
                           INKY_SPAWN_BLOCK: INKY_SPAWN_BLOCK_COLOR,
                           CLYDE_SPAWN_BLOCK: CLYDE_SPAWN_BLOCK_COLOR,
-                          PACMAN_SPAWN_BLOCK: PACMAN_SPAWN_BLOCK_COLOR}
+                          PACMAN_SPAWN_BLOCK: PACMAN_SPAWN_BLOCK_COLOR,
+                          SUPER_DOT_BLOCK: SUPER_DOT_BLOCK_COLOR}
 
 color_to_block_mapping = {v: k for k, v in block_to_color_mapping.items()}
 
 DISPLAY_WALL_BLOCK_COLOR = (0, 51, 255)
 DISPLAY_EMPTY_BLOCK_COLOR = (0, 0, 0)
 
+NUM_DIRECTIONS = 4
 
 class Level():
     # Matrix that holds the level details
@@ -87,6 +91,8 @@ class Level():
                     # Puts dots in all empty blocks
                     if color_to_block_mapping[color_tuple] == EMPTY_BLOCK:
                         self.dots.add(Dot(self, 'sprites/dot.png', (row, col)))
+                    if color_to_block_mapping[color_tuple] == SUPER_DOT_BLOCK:
+                        self.dots.add(Dot(self, 'sprites/super-dot.png', (row, col), is_super=True))
 
                 except KeyError:
                     raise ValueError("{0} is not a valid level descriptor\
@@ -106,6 +112,15 @@ class Level():
         is_wall = True if (self.arena[arena_row][arena_col] == WALL_BLOCK) else False
 
         return (not is_wall)
+
+    def is_turning_point(self, arena_position):
+        accessible = []
+        for dir in range(NUM_DIRECTIONS):
+            accessible.append(self.is_accessible(self.get_next_cell_in_direction(arena_position, dir)))
+
+        if accessible.count(True) >= 3 or (accessible.count(True) == 2 and not((accessible[0] and accessible[2]) or (accessible[1] and accessible[3]))):
+            return True
+        return False
 
     def get_next_cell_in_direction(self, arena_position, direction):
         arena_row, arena_col = arena_position

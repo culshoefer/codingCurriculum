@@ -1,5 +1,6 @@
 import pygame
 from .character import Character, NUM_DIRECTIONS
+import random
 
 NUM_MODES = 3
 CHASE_MODE = 0
@@ -34,13 +35,28 @@ class Ghost(Character):
 
         return None
 
+    def _direction_to(self, target_pos):
+        path_to_target = self._bfs(self.arena_position, self.target.arena_position)
+
+        if path_to_target is not None and len(path_to_target) >= 2:
+            next_cell = path_to_target[1]
+
+            diff = (next_cell[0] - self.arena_position[0], next_cell[1] - self.arena_position[1])
+            diff_to_direction = {(0, 1): 0, (-1, 0): 1, (0, -1): 2, (1, 0): 3}
+
+            return diff_to_direction[diff]
+
+        else:
+            return self.curr_direction
+
     def follow(self, target):
         self.target = target
 
     def update(self):
-        if self.target is not None:
-            shortest_path_to_target = self._bfs(self.arena_position, self.target.arena_position)
+        if self.level.is_turning_point(self.arena_position):
+            self.curr_direction = self._direction_to(self.target.arena_position)
 
-            if shortest_path_to_target is not None and len(shortest_path_to_target) >= 2:
-                self.arena_position = shortest_path_to_target[1]
-                self.rect = self.image.get_rect().move(self.level.get_position_from_arena_position(self.arena_position))
+        next_cell = self.get_next_cell_in_direction(self.curr_direction)
+        if self.level.is_accessible(next_cell):
+            self.arena_position = next_cell
+            self.rect = self.image.get_rect().move(self.level.get_position_from_arena_position(self.arena_position))
