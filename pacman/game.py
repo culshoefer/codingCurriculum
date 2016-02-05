@@ -27,16 +27,16 @@ if __name__ == '__main__':
 
     pacman = Pacman(l, 'sprites/pacman.png', scale_factor, 0, 10)
 
-    blinky = Blinky(l, 'sprites/blinky.png', scale_factor, 0, 7)
-    pinky = Pinky(l, 'sprites/pinky.png', scale_factor, 0, 6)
-    inky = Inky(l, 'sprites/inky.png', scale_factor, 0, 5)
-    clyde = Clyde(l, 'sprites/clyde.png', scale_factor, 0, 4)
+    blinky = Blinky(l, 'sprites/blinky.png', 'sprites/frightened-ghost.png', scale_factor, 0, 7)
+    pinky = Pinky(l, 'sprites/pinky.png', 'sprites/frightened-ghost.png', scale_factor, 0, 6)
+    inky = Inky(l, 'sprites/inky.png', 'sprites/frightened-ghost.png', scale_factor, 0, 5)
+    clyde = Clyde(l, 'sprites/clyde.png', 'sprites/frightened-ghost.png', scale_factor, 0, 4)
 
     players = pygame.sprite.GroupSingle(pacman)
     ghosts = pygame.sprite.Group(blinky, pinky, inky, clyde)
 
     for ghost in ghosts:
-        ghost.follow(pacman)
+        ghost.set_target(pacman)
     
     # Game start
     screen.blit(l.get_surface(), (0, 0))
@@ -73,6 +73,8 @@ if __name__ == '__main__':
             
             if eaten_dot.is_super:
                 energizer_sound.play()
+                for ghost in ghosts:
+                    ghost.frighten()
                 print "You ate an energizer."
 
             if pygame.mixer.get_busy() == False:
@@ -81,14 +83,16 @@ if __name__ == '__main__':
                 else:
                     chomp_sound.play()
 
-        ghost_collision = pygame.sprite.spritecollideany(pacman, ghosts, pygame.sprite.collide_circle)
-        if ghost_collision is not None:
-            print "You were eaten by {}.\n".format(ghost_collision.name)
+        ghosts_collided_with = pygame.sprite.spritecollide(pacman, ghosts, False, pygame.sprite.collide_circle)
+        if ghosts_collided_with is not None:
+            for ghost in ghosts_collided_with:
+                lost_life = ghost.handle_collision()
 
-            pygame.mixer.stop()
-            death_sound.play()
-            pygame.time.wait(int(death_sound.get_length() * 1000))
-            pygame.quit()
+                if lost_life:
+                    pygame.mixer.stop()
+                    death_sound.play()
+                    pygame.time.wait(int(death_sound.get_length() * 1000))
+                    pygame.quit()
 
         # Update in discrete steps
         ticks = clock.tick(MAX_FRAMERATE)
