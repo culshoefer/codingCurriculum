@@ -1,4 +1,6 @@
 import pygame
+import random
+
 
 pygame.init()
 
@@ -84,6 +86,9 @@ class SnakeBody:
     def moveForward(self, head):
         self.arr.insert(0, Position(head.X(), head.Y()))
         self.arr.pop(len(self.arr)-1)
+    def grow(self, head):
+        self.arr.insert(0, Position(head.X(), head.Y()))
+
 
     def __repr__(self):
         s = ""
@@ -107,6 +112,12 @@ class Snake:
         self.body = SnakeBody(self.position, body);
     def changeDirection(change_x, change_y):
         self.direction = [change_x, change_y]
+    def nextPos(self):
+        return Position(self.position.X() + self.direction.X(),
+                        self.position.Y() + self.direction.Y())
+    def grow(self):
+        self.body.grow(self.position)
+        self.position.changePosition(self.direction.X(), self.direction.Y())
     def moveForward(self):
         self.body.moveForward(self.position)
         self.position.changePosition(self.direction.X(), self.direction.Y())
@@ -171,7 +182,11 @@ def drawSnake(screen, snake, square_size):
         py = pos.Y() * square_size
         drawSquare(screen, square_size, px, py)
 
-
+def collisionWithSnake(snake, position):
+    for pos in snake.body.arr:
+            if pos == position:
+                return True
+    return False
 
 
 
@@ -188,12 +203,17 @@ BLACK = (0x00, 0x00, 0x00)
 size = (screen_width, screen_height)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Snake")
+
+# set up the game variables
 done = False
 passed_time = 0
-lvl_speed = [1000, 900, 800, 600, 500, 400]
+lvl_speed = [600, 500, 400]
 level = 0
 clock = pygame.time.Clock()
 snake = Snake(int(field_columns/2), int(field_rows/2))
+food = False
+food_pos = None
+
 
 # game loop
 while not done:
@@ -211,38 +231,60 @@ while not done:
             elif event.key == pygame.K_RIGHT:
                 snake.turn("RIGHT")
 
-    #Game logic should go here
-    
+    #Game place food 
+    if not food:
+        while not food:
+            # start at 1 and end at -1 prevents collision with borders
+            print "generating random points"
+            food_x = random.randint(1, field_columns-2)
+            food_y = random.randint(1, field_rows-2)
+            food_pos = Position(food_x, food_y)
+            if not collisionWithSnake(snake, food_pos):
+                print "point found: %s , %s" % (food_x, food_y)
+                food = True
+        
     #collision detection
     
+
     # border collision detection
     if snake.position.X() == 0 or snake.position.X() == field_columns - 1 or snake.position.Y() == 0 or snake.position.Y() == field_rows - 1:
         done = True
         print "border collision"
     
     #body collision
-    if len(snake.body.arr) > 2:
-        print len(snake.body.arr)
-        for i in range(2, len(snake.body.arr)):
-            if snake.body.arr[i] == snake.position:
-                done = True
-                print "body collision"
+    if collisionWithSnake(snake, snake.position):
+        print "body collision"
+        done = True
 
-
-
-    print snake
+   
+    #print snake
     # Drawing code should go here
     screen.fill(BLACK)
     drawBorders(screen, field_columns, field_rows, square_size)
+    # draw the food:
+    if food:
+        drawSquare(screen, square_size, food_pos.X()* square_size, food_pos.Y()* square_size, (0xFF, 0xFF, 0xFF))
     drawSnake(screen, snake, square_size)
 
-
-    pygame.display.flip()
+    
     
     passed_time += clock.tick(60)
     if passed_time > lvl_speed[level]:
-        snake.moveForward()
+        
+
+        
+        if food is not None:
+            if snake.nextPos() == food_pos:
+                print "yummi"
+                snake.grow()
+                food = False
+            else:
+                snake.moveForward()
+        else:
+            snake.moveForward()
         passed_time = 0
+
+    pygame.display.flip()
         
         
 
