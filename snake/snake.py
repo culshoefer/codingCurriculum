@@ -191,7 +191,7 @@ def collisionWithSnake(snake, position):
 
 
 # game constants
-square_size = 40
+square_size = 20
 screen_width = 640
 screen_height= 480
 field_columns = screen_width / square_size
@@ -207,7 +207,7 @@ pygame.display.set_caption("Snake")
 # set up the game variables
 done = False
 passed_time = 0
-lvl_speed = [600, 500, 400]
+lvl_speed = [400,300,200,100]
 level = 0
 clock = pygame.time.Clock()
 snake = Snake(int(field_columns/2), int(field_rows/2))
