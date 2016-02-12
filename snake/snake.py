@@ -207,7 +207,7 @@ pygame.display.set_caption("Snake")
 # set up the game variables
 done = False
 passed_time = 0
-lvl_speed = [400,300,200,100]
+lvl_speed = [50,300,200,100]
 level = 0
 clock = pygame.time.Clock()
 snake = Snake(int(field_columns/2), int(field_rows/2))
