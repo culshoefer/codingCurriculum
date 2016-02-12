@@ -207,12 +207,13 @@ pygame.display.set_caption("Snake")
 # set up the game variables
 done = False
 passed_time = 0
-lvl_speed = [50,300,200,100]
+lvl_speed = [200,150,100,50,40,30,20,10]
 level = 0
 clock = pygame.time.Clock()
 snake = Snake(int(field_columns/2), int(field_rows/2))
 food = False
 food_pos = None
+eaten = 0
 
 
 # game loop
@@ -275,7 +276,8 @@ while not done:
         
         if food is not None:
             if snake.nextPos() == food_pos:
-                print "yummi"
+                #print "yummi"
+                eaten += 1
                 snake.grow()
                 food = False
             else:
