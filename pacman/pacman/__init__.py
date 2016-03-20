@@ -1,1 +1,1 @@
-__all__ = ["level"]
+__all__ = ['level', 'character', 'pacman', 'ghost', 'blinky', 'pinky', 'inky', 'clyde']
