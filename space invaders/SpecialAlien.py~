@@ -1,0 +1,6 @@
+
+def SpecialAlien(Alien):
+
+        self.specialAlien = Entity(100, 100, 90, "img/sprite8.png", 1, self.width, self.height)
+        self.specialAlien.setIntervalX(2)
+        self.specialAlien.posBoundaryRight = self.width + 40

@@ -1,0 +1,69 @@
+import pygame
+import random
+
+class ShotEngine():
+    def __init__():
+        self.alienShots = []
+        self.playerShots = []
+        self.previousShotTicks = 0
+        self.ticks = 0
+    
+    def isLucky(self, chance):
+        return random.random() > chance
+    
+    def doesAlienShoot(self):
+        return self.isLucky(0.997)
+
+    def addAlienShot(x, y):
+        shot = Shot(x, y, 0, 0.75, self.gameWidth, self.gameHeight)
+        self.alienShots.append(shot)
+
+    def deleteAlienShot(shot):
+        self.alienShots.remove(shot)
+
+    def addPlayerShot(x, y):
+        shot = Shot(x, y, 0, -1.25, self.gameWidth, self.gameHeight)
+        self.playerShots.append(shot)
+
+    def deletePlayerShot(shot):
+        self.playerShots.remove(shot)
+
+    def isPauseBetweenShotsBig(self):
+        return self.ticks - 200 > self.lastShot
+
+    def drawAlienShots(self):
+        for shot in self.alienShots:
+            if not shot.isInScreen():
+                self.deleteAlienShot(shot)
+            else:
+                shot.update()
+                shot.draw()
+                self.considerAlienShot(shot)
+    
+    def considerShotOnSpecialAlien(self, shot, specialAlien):
+        if specialAlien.isHit(shot):
+            self.specialAlien.consider = False
+            return specialAlien.score
+
+    def considerShotOnNormalAliens(self, aliens, score):
+        for row in aliens:
+            for col in row:
+                if col.isHit(shot):
+                    score += col.score
+                    col.consider = False
+                    self.playerShots.remove(shot)
+        return score
+
+    def computePlayerShots(self):
+        for shot in self.playerShots:
+            if not shot.isInScreen():
+                self.playerShots.remove(shot)
+            else:
+                shot.update()
+                self.screen.blit(shot.image, shot.rect)
+                self.considerPlayerShot(shot)
+
+    def update(self):
+        self.makeRandomShots()
+        self.computeAlienShots()
+        self.computePlayerShots()
