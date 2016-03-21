@@ -2,7 +2,7 @@ import pygame
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, x, y, dx, dy, image, gameWidth, gameHeight):
-b        super(Entity, self).__init__()
+        super(Entity, self).__init__()
         self.x = x
         self.y = y
         self.dx = dx
@@ -23,6 +23,8 @@ b        super(Entity, self).__init__()
         self.move()
         self.checkBoundaries()
         self.rect.center = (self.x, self.y)
+        if not self.isInScreen():
+            self.consider = False
                  
     def intersects(self, Entity):
         return self.rect.colliderect(Entity.rect)

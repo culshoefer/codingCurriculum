@@ -2,7 +2,6 @@ import pygame
 import random
 from Entity import Entity
 from AliveEntity import AliveEntity
-from Alien import Alien
 from ShotEngine import ShotEngine
 from Display import Display
 
@@ -17,7 +16,7 @@ class Game():
         self.ticks = 0
         self.player= player
         self.aliens= aliens
-        self.specialAlien = Alien(0, 0, 0, 0, 0, "img/shot.png", 0, width, height) #dummy assignment
+        self.specialAlien = AliveEntity(0, 0, 0, 0, 0, "img/shot.png", 0, width, height) #dummy assignment
         self.specialAlien.consider = False
         self.running = True
         self.aliensExist = True
@@ -52,8 +51,6 @@ class Game():
     def drawSpecialAlien(self):
         if self.specialAlien.consider:
             self.specialAlien.update()
-            if not self.specialAlien.isInScreen():
-                self.specialAlien.consider = False
             self.screen.blit(self.specialAlien.image, self.specialAlien.rect)
     
     def drawAlien(self, alien):

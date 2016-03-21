@@ -1,7 +1,7 @@
 import pygame
 import sys
 from Entity import Entity
-from Alien import Alien
+from AliveEntity import AliveEntity
 from Player import Player
 from Game import Game
 
@@ -15,7 +15,7 @@ def spawnNewAlien(i, j):
     startPosx = width/2 -1400 + 30 * i
     startPosy = height/2 - 130 + 30 * j
     imageName = "img/sprite" + str(j+1) + ".png"
-    newAlien = Alien(5 * (6 - j), startPosx, startPosy, 4, 0, imageName, 1, width, height)
+    newAlien = AliveEntity(5 * (6 - j), startPosx, startPosy, 4, 0, imageName, 1, width, height)
     newAlien.posBoundaryLeft = 50 + 30 * i
     newAlien.posBoundaryRight= width -50 - 30 * (10 - i)
     return newAlien
