@@ -60,7 +60,7 @@ class ShotEngine():
                 
     def considerShotOnSpecialAlien(self, shot, specialAlien):
         if specialAlien.isHit(shot):
-            specialAlien.consider = False
+            specialAlien.removeLife()
             return specialAlien.score
 
     def considerPlayerShot(self, shot, specialAlien, aliens):
@@ -72,7 +72,7 @@ class ShotEngine():
             for col in row:
                 if col.isHit(shot):
                     score += col.score
-                    col.consider = False
+                    col.removeLife()
                     self.playerShots.remove(shot)
         return score
 

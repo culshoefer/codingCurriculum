@@ -50,11 +50,13 @@ class Game():
 
     def drawSpecialAlien(self):
         if self.specialAlien.consider:
-            self.specialAlien.update()
+            self.specialAlien.updateWithMove()
             self.screen.blit(self.specialAlien.image, self.specialAlien.rect)
     
     def drawAlien(self, alien):
         if self.ticks % 200 == 0:
+            alien.updateWithMove()
+        else:
             alien.update()
         alien.draw(self.screen) 
         
@@ -69,10 +71,10 @@ class Game():
 
     def update(self):
         self.display.drawAll(self.screen, self.score, self.player.lives)
-        self.computeInput()
-        self.player.update()
         self.player.draw(self.screen)
         self.drawAliens()
+        self.computeInput()
+        self.player.update()
         self.shotEngine.update(self.aliens, self.screen)
         self.score += self.shotEngine.computeShots(self.player, self.specialAlien, self.aliens)
         self.ticks += 1

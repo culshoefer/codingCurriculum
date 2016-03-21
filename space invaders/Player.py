@@ -5,7 +5,6 @@ from Shot import Shot
 class Player(AliveEntity):
     def __init__(self, score, lives, gameWidth, gameHeight):
         super(Player, self).__init__(score, gameWidth/2, 400, 0, 0, "img/player.png", lives, gameWidth, gameHeight)
-        self.lives = lives
         self.last_shot = 0
         
     def shoot(self, ticks):
@@ -31,12 +30,8 @@ class Player(AliveEntity):
         if pressed_keys[pygame.K_d] or pressed_keys[pygame.K_RIGHT]:
             self.dx = 1
             
-    def removeLife(self):
-        self.lives -= 1
-
     def update(self):
+        super(Player, self).update()
         self.move()
-        self.checkBoundaries()
-        self.rect.center = (self.x, self.y)
         self.dx = 0
         
