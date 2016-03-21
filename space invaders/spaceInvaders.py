@@ -1,6 +1,5 @@
 import pygame
 import sys
-from Entity import Entity
 from AliveEntity import AliveEntity
 from Player import Player
 from Game import Game
@@ -8,7 +7,6 @@ from Game import Game
 pygame.init()
 
 size = width, height = 448, 512
-black = 0, 0, 0
 white = 255, 255, 255
 
 def spawnNewAlien(i, j):

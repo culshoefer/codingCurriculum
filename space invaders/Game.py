@@ -1,6 +1,5 @@
 import pygame
 import random
-from Entity import Entity
 from AliveEntity import AliveEntity
 from ShotEngine import ShotEngine
 from Display import Display
