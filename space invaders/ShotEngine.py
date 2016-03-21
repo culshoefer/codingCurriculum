@@ -1,6 +1,6 @@
 import pygame
 import random
-from Shot import Shot
+from Entity import Entity
 
 class ShotEngine():
     def __init__(self, gameWidth, gameHeight):
@@ -17,7 +17,7 @@ class ShotEngine():
         return self.isLucky(0.997)
 
     def makeShot(self, x, y, speed):
-        shot = Shot(x, y, 0, speed, self.gameWidth, self.gameHeight)
+        shot = Entity(x, y, 0, speed, "img/shot.png", self.gameWidth, self.gameHeight)
         return shot
     
     def addAlienShot(self, x, y):

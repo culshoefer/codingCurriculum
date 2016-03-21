@@ -1,6 +1,6 @@
 import pygame
 from AliveEntity import AliveEntity
-from Shot import Shot
+from Entity import Entity
 
 class Player(AliveEntity):
     def __init__(self, score, lives, gameWidth, gameHeight):
@@ -8,8 +8,12 @@ class Player(AliveEntity):
         self.last_shot = 0
         
     def shoot(self, ticks):
-        shot = Shot(self.x, self.y, 0, -1.25, self.gameWidth, self.gameHeight)
+        shot = self.makeShot()
         self.last_shot = ticks
+        return shot
+
+    def makeShot(self):
+        shot = Entity(self.x, self.y, 0, -1.25, "img/shot.png", self.gameWidth, self.gameHeight)
         return shot
 
     def checkKeyboardInput(self, pressed_keys):

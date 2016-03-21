@@ -4,9 +4,6 @@ from AliveEntity import AliveEntity
 from ShotEngine import ShotEngine
 from Display import Display
 
-white = 255, 255, 255
-black = 0, 0, 0
-
 class Game():
     def __init__(self, startScore, aliens, player, width, height, size):
         self.score = startScore
@@ -47,10 +44,9 @@ class Game():
         if shot is not None:
             self.shotEngine.addPlayerShot(shot)
 
-    def drawSpecialAlien(self):
-        if self.specialAlien.consider:
-            self.specialAlien.updateWithMove()
-            self.screen.blit(self.specialAlien.image, self.specialAlien.rect)
+    def dealWithSpecialAlien(self):
+        self.specialAlien.updateWithMove()
+        self.specialAlien.draw(self.screen)
     
     def drawAlien(self, alien):
         if self.ticks % 200 == 0:
@@ -61,7 +57,6 @@ class Game():
         
     def drawAliens(self):
         self.aliensExist = False
-        self.drawSpecialAlien()
         for row in self.aliens:
             for col in row:
                 if col is not None:
@@ -71,6 +66,7 @@ class Game():
     def update(self):
         self.display.drawAll(self.screen, self.score, self.player.lives)
         self.player.draw(self.screen)
+        self.dealWithSpecialAlien()
         self.drawAliens()
         self.computeInput()
         self.player.update()
