@@ -6,7 +6,6 @@ class ShotEngine():
     def __init__(self, gameWidth, gameHeight):
         self.alienShots = []
         self.playerShots = []
-        self.previousShotTicks = 0
         self.gameWidth = gameWidth
         self.gameHeight = gameHeight
     

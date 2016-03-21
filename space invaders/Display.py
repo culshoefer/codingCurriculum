@@ -28,7 +28,7 @@ class Display():
         screen.blit(self.text, self.textpos)
 
     def drawLives(self, screen, numLives):
-        for i in range(0, numLives):
+        for i in range(numLives):
             livesRect = self.lifeImage.get_rect()
             livesRect.x = self.textpos.x + topDist + i * liveXDist
             livesRect.y = self.textpos.y
